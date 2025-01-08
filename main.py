@@ -107,18 +107,20 @@ def show_results(predictions):
 
     results_frame.pack(pady=20)
     results_text.delete(1.0, tk.END)
-    results_text.insert(tk.END, "Results:\n")
-    results_text.insert(tk.END, "Class 1 Metrics:\n")
+    results_text.insert(tk.END, "Results:\n\n")
+    results_text.insert(tk.END, "Class 1 Metrics:\n", "bold")
     results_text.insert(tk.END, f"Accuracy: {accuracy_class1:.3f}\n")
     results_text.insert(tk.END, f"Recall: {recall_class1:.3f}\n")
     results_text.insert(tk.END, f"Precision: {precision_class1:.3f}\n")
-    results_text.insert(tk.END, f"F1 Score: {f1_class1:.3f}\n")
-    results_text.insert(tk.END, "Class 2 Metrics:\n")
+    results_text.insert(tk.END, f"F1 Score: {f1_class1:.3f}\n\n")
+    results_text.insert(tk.END, "Class 2 Metrics:\n", "bold")
     results_text.insert(tk.END, f"Accuracy: {accuracy_class2:.3f}\n")
     results_text.insert(tk.END, f"Recall: {recall_class2:.3f}\n")
     results_text.insert(tk.END, f"Precision: {precision_class2:.3f}\n")
-    results_text.insert(tk.END, f"F1 Score: {f1_class2:.3f}\n")
-    results_text.insert(tk.END, f"Overall Accuracy: {overall_accuracy:.3f}\n")
+    results_text.insert(tk.END, f"F1 Score: {f1_class2:.3f}\n\n")
+    results_text.insert(tk.END, f"Overall Accuracy: {overall_accuracy:.3f}\n", "bold")
+
+    results_text.tag_configure("bold", font=("Helvetica", 12, "bold"))
 
 def clear():
     global TRAIN_PATH, TEST_PATH
