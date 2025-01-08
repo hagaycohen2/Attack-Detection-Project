@@ -42,21 +42,9 @@ def run():
 
     if dataset_label.cget("text") != "Dataset: None":
         dataset_path = dataset_label.full_path
-        
-        # Split the dataset into train and test 
-        df = pd.read_csv(dataset_path)
-        train, test = train_test_split(df, test_size=int(percentage)/100)
-
-        # remove the file extension
-        dataset_path = dataset_path.split(".")[0]
-
-        train.to_csv(dataset_path+"_train.csv", index=False)
-        test.to_csv(dataset_path+"_test.csv", index=False)
-        TRAIN_PATH = dataset_path+"_train.csv"
-        TEST_PATH = dataset_path+"_test.csv"
-        print(f"Running with Dataset: {dataset_path}, Train-Test Split: {percentage}%, Number of Features: {num_features}")
+        split_dataset(dataset_path, percentage)
     
-    if TRAIN_PATH and TEST_PATH: # if both train and test files are selected, or dataset is selected,and train-test split percentage is entered
+    if TRAIN_PATH and TEST_PATH:
         print(f"Running with Train File: {TRAIN_PATH}, Test File: {TEST_PATH}, Number of Features: {num_features}")
         try:
             elastic_for_gui.delete_index(elastic_for_gui.ds)
@@ -69,9 +57,19 @@ def run():
         messagebox.showerror("Error", "Please choose a dataset or train/test files first.")
         return
 
-    # Show learning frame
     learning_frame.pack(pady=20)
     progress_label.config(text="Learning in progress...")
+
+def split_dataset(dataset_path, percentage):
+    global TRAIN_PATH, TEST_PATH
+    df = pd.read_csv(dataset_path)
+    train, test = train_test_split(df, test_size=int(percentage)/100)
+    dataset_path = dataset_path.split(".")[0]
+    train.to_csv(dataset_path+"_train.csv", index=False)
+    test.to_csv(dataset_path+"_test.csv", index=False)
+    TRAIN_PATH = dataset_path+"_train.csv"
+    TEST_PATH = dataset_path+"_test.csv"
+    print(f"Running with Dataset: {dataset_path}, Train-Test Split: {percentage}%")
 
 def insert_and_test():
     elastic_for_gui.insert(TRAIN_PATH, int(num_features_entry.get()), update_progress)
@@ -134,10 +132,9 @@ def clear():
     results_text.delete(1.0, tk.END)
     TRAIN_PATH = ""
     TEST_PATH = ""
-    
-def main():
-    global dataset_label, percentage_label, train_label, test_label, num_features_entry, percentage_entry, learning_frame, progress_label, results_frame, results_text, root
 
+def init_GUI():
+    global root, dataset_label, train_label, test_label, num_features_entry, percentage_entry, progress_label, results_text, results_frame, learning_frame
     root = tk.Tk()
     root.title("Attack Detection Project")
     root.geometry("400x600")
@@ -183,9 +180,11 @@ def main():
     progress_label.pack()
 
     results_frame = tk.Frame(root, bg="#f0f0f0")
-    results_text = tk.Text(results_frame, height=10, width=50)
+    results_text = tk.Text(results_frame, height=25, width=50)
     results_text.pack()
 
+def main():
+    init_GUI()
     root.mainloop()
 
 if __name__ == "__main__":
