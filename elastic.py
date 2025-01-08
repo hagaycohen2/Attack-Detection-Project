@@ -99,6 +99,8 @@ def normalizePath(path):
     path = path.replace(" ", "")
     return path.replace('\\\\', '\\')
 
+    
+
 def main():
 
     # initialize argument parser
