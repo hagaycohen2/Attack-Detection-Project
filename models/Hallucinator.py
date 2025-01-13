@@ -33,9 +33,9 @@ def load_data(train_path, test_path):
     X_test = scaler.transform(X_test)
 
     # Save encoders and scaler
-    joblib.dump(le_main, r'C:\Users\User\Attack-Detection-Project\models\saved_models\RBRN\le_main.pkl')
-    joblib.dump(le_secondary, r'C:\Users\User\Attack-Detection-Project\models\saved_models\RBRN\le_secondary.pkl')
-    joblib.dump(scaler, r'C:\Users\User\Attack-Detection-Project\models\saved_models\RBRN\scaler.pkl')
+    joblib.dump(le_main, r'C:\Users\User\Attack-Detection-Project\models\saved_models\Hallucinator\le_main.pkl')
+    joblib.dump(le_secondary, r'C:\Users\User\Attack-Detection-Project\models\saved_models\Hallucinator\le_secondary.pkl')
+    joblib.dump(scaler, r'C:\Users\User\Attack-Detection-Project\models\saved_models\Hallucinator\scaler.pkl')
 
     return X_train, y_train, X_test, y_test, len(le_main.classes_), len(le_secondary.classes_)
 
@@ -80,12 +80,12 @@ def train_models(X_train, y_train, X_test, y_test, main_classes, secondary_class
     classifier_secondary.fit(combined_data, combined_secondary_labels, validation_data=(X_test, y_test[:, 1]), epochs=10, batch_size=32)
 
     # Save models
-    classifier_main.save(save_path + 'RBRN_main.keras')
-    classifier_secondary.save(save_path + 'RBRN_secondary.keras')
+    classifier_main.save(save_path + 'Hallucinator_main.keras')
+    classifier_secondary.save(save_path + 'Hallucinator_secondary.keras')
 
 def main():
     X_train, y_train, X_test, y_test, main_classes, secondary_classes = load_data(r'C:\Users\User\Attack-Detection-Project\datasets\MTA\train_mta_data_new_12f.csv', r'C:\Users\User\Attack-Detection-Project\datasets\MTA\test_mta_data_new_12f.csv')
-    train_models(X_train, y_train, X_test, y_test, main_classes, secondary_classes, r"C:\Users\User\Attack-Detection-Project\models\saved_models\RBRN\\")
+    train_models(X_train, y_train, X_test, y_test, main_classes, secondary_classes, r"C:\Users\User\Attack-Detection-Project\models\saved_models\Hallucinator\\")
 
 if __name__ == "__main__":
     main()
