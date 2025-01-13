@@ -1,0 +1,28 @@
+Main Class Classification Report:
+              precision    recall  f1-score   support
+
+      dridex       0.69      0.65      0.67        17
+      emotet       0.97      0.97      0.97       260
+    hancitor       0.98      0.98      0.98       559
+      icedid       0.97      0.91      0.94        81
+      qakbot       0.86      0.93      0.89       109
+       valak       0.94      0.98      0.96       166
+     zloader       0.89      0.60      0.71        42
+
+    accuracy                           0.95      1234
+   macro avg       0.90      0.86      0.87      1234
+weighted avg       0.95      0.95      0.95      1234
+
+Secondary Class Classification Report:
+              precision    recall  f1-score   support
+
+     dropper       0.99      0.97      0.98       861
+ infostealer       0.94      0.97      0.95       373
+
+    accuracy                           0.97      1234
+   macro avg       0.96      0.97      0.97      1234
+weighted avg       0.97      0.97      0.97      1234
+
+Main Class Accuracy: 0.9505672609400324
+Secondary Class Accuracy: 0.9716369529983793
+Overall Accuracy: 0.9611021069692058

@@ -4,7 +4,7 @@ import json
 import os
 import re
 import warnings
-from sklearn.metrics import accuracy_score,confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 import pandas as pd
 from elasticsearch import Elasticsearch
@@ -17,7 +17,7 @@ def delete_index(index_name):
     es = Elasticsearch(['http://localhost:9200'], http_auth=('elasticsearch', '3M44Xn9lRLm0ciIVlQ2X1w'), verify_certs=False)
     es.indices.delete(index=index_name)
     
-def create_index(index_name, dims):
+def create_index(index_name, dims, metric = "L2_norm"):
     es = Elasticsearch(['http://localhost:9200'], http_auth=('elasticsearch', '3M44Xn9lRLm0ciIVlQ2X1w'), verify_certs=False)
     mapping = {
         "properties": {
@@ -25,7 +25,7 @@ def create_index(index_name, dims):
                 "type": "dense_vector",
                 "dims": dims,
                 "index": True,
-                "similarity": "l2_norm"
+                "similarity": "max_inner_product"
             },
             "class": {
                 "type": "keyword"
@@ -113,18 +113,23 @@ def main():
     parser.add_argument("-t", "--train", dest="train", help="Path to train dataset")
     parser.add_argument("-T", "--test", dest="test_data", help="Path to test dataset")
 
+    parser.add_argument("-m", "--metric", dest="metric", help="Metric to use for KNN", default="l2")
+
     # parse arguments
     args = parser.parse_args()
 
     if not args.num:
         parser.error("Please provide number of features")
+    
+    if args.metric not in ["l2_norm", "cosine", "max_inner_product"]:
+        parser.error("Invalid metric. Please use 'l2_norm' or 'cosine' or 'max_inner_product'")
 
     # initialize the index based on the number of features
     try:
         delete_index(ds)
     except:
         pass
-    create_index(ds, int(args.num))
+    create_index(ds, int(args.num), args.metric)
 
     # initalize the predictions
     predictions = []
@@ -153,34 +158,35 @@ def main():
         y_true.append(pred[3])
         y_pred.append(pred[1])
 
-    accuracy = accuracy_score(y_true, y_pred)
-    print("Accuracy: ", accuracy)
+    main_report = classification_report(y_true, y_pred)
+    print("Main Class Classification Report:")
+    print(main_report)
 
-    # calculate confusion matrix
-    confusion = confusion_matrix(y_true, y_pred)
+    main_accuracy = accuracy_score(y_true, y_pred)
 
-    print("Confusion Matrix: ", confusion)
 
-    # calculate accuracy for second class
     y_true = []
     y_pred = []
     for pred in predictions:
         y_true.append(pred[4])
         y_pred.append(pred[2])
-    
-    accuracy = accuracy_score(y_true, y_pred)
-    print("Accuracy: ", accuracy)
 
-    # calculate confusion matrix
-    confusion = confusion_matrix(y_true, y_pred)
-
-    print("Confusion Matrix: ", confusion)
-    
+    secondary_report = classification_report(y_true, y_pred)
+    print("Secondary Class Classification Report:")
+    print(secondary_report)
 
 
-    
+    print("Main Class Accuracy:", main_accuracy)
+    secondary_accuracy = accuracy_score(y_true, y_pred)
+    print("Secondary Class Accuracy:", secondary_accuracy)
 
+    overall_accuracy = (main_accuracy + secondary_accuracy) / 2
+    print("Overall Accuracy:", overall_accuracy)
 
 
 if __name__ == "__main__":
     main()
+
+
+# example usage:
+# python models\elastic.py -n 12 --test C:\Users\User\Attack-Detection-Project\datasets\MTA\test_mta_data_new_12f --train C:\Users\User\Attack-Detection-Project\datasets\MTA\train_mta_data_new_12f
