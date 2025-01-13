@@ -33,11 +33,15 @@ def run():
     global TRAIN_PATH, TEST_PATH
     num_features = num_features_entry.get()
     percentage = percentage_entry.get()
+    num_classes = num_classes_entry.get()
     if not num_features:
         messagebox.showerror("Error", "Please enter the number of features.")
         return
     if not percentage:
         messagebox.showerror("Error", "Please enter the train-test split percentage.")
+        return
+    if not num_classes:
+        messagebox.showerror("Error", "Please enter the number of classes.")
         return
 
     if dataset_label.cget("text") != "Dataset: None":
@@ -45,13 +49,13 @@ def run():
         split_dataset(dataset_path, percentage)
     
     if TRAIN_PATH and TEST_PATH:
-        print(f"Running with Train File: {TRAIN_PATH}, Test File: {TEST_PATH}, Number of Features: {num_features}")
+        print(f"Running with Train File: {TRAIN_PATH}, Test File: {TEST_PATH}, Number of Features: {num_features}, Number of Classes: {num_classes}")
         try:
             elastic_for_gui.delete_index(elastic_for_gui.ds)
         except:
             pass
-        elastic_for_gui.create_index(elastic_for_gui.ds, int(num_features))
-        thread = threading.Thread(target=insert_and_test)
+        elastic_for_gui.create_index(elastic_for_gui.ds, int(num_features), int(num_classes))
+        thread = threading.Thread(target=insert_and_test, args=(int(num_classes),))
         thread.start()
     else:
         messagebox.showerror("Error", "Please choose a dataset or train/test files first.")
@@ -71,13 +75,13 @@ def split_dataset(dataset_path, percentage):
     TEST_PATH = dataset_path+"_test.csv"
     print(f"Running with Dataset: {dataset_path}, Train-Test Split: {percentage}%")
 
-def insert_and_test():
-    elastic_for_gui.insert(TRAIN_PATH, int(num_features_entry.get()), update_progress)
+def insert_and_test(num_classes):
+    elastic_for_gui.insert(TRAIN_PATH, int(num_features_entry.get()), int(num_classes), update_progress)
     update_progress(100)
     progress_label.config(text="Learning completed! Now testing...")
-    predictions = elastic_for_gui.test(TEST_PATH, int(num_features_entry.get()), update_test_progress)
+    predictions = elastic_for_gui.test(TEST_PATH, int(num_features_entry.get()), int(num_classes), update_test_progress)
     update_test_progress(100)
-    show_results(predictions)
+    show_results(predictions, num_classes)
 
 def update_progress(progress):
     progress_label.config(text=f"Learning in progress... {progress:.2f}%")
@@ -85,39 +89,28 @@ def update_progress(progress):
 def update_test_progress(progress):
     progress_label.config(text=f"Testing in progress... {progress:.2f}%")
 
-def show_results(predictions):
-    y_true_class1 = [pred[3] for pred in predictions]
-    y_pred_class1 = [pred[1] for pred in predictions]
-    y_true_class2 = [pred[4] for pred in predictions]
-    y_pred_class2 = [pred[2] for pred in predictions]
-
-    accuracy_class1 = accuracy_score(y_true_class1, y_pred_class1)
-    recall_class1 = recall_score(y_true_class1, y_pred_class1, average='macro')
-    precision_class1 = precision_score(y_true_class1, y_pred_class1, average='macro')
-    f1_class1 = f1_score(y_true_class1, y_pred_class1, average='macro')
-
-    accuracy_class2 = accuracy_score(y_true_class2, y_pred_class2)
-    recall_class2 = recall_score(y_true_class2, y_pred_class2, average='macro')
-    precision_class2 = precision_score(y_true_class2, y_pred_class2, average='macro')
-    f1_class2 = f1_score(y_true_class2, y_pred_class2, average='macro')
-
-    overall_accuracy = (accuracy_class1 + accuracy_class2) / 2
-
+def show_results(predictions, num_classes):
     results_frame.pack(pady=20)
     results_text.delete(1.0, tk.END)
     results_text.insert(tk.END, "Results:\n\n")
-    results_text.insert(tk.END, "Class 1 Metrics:\n", "bold")
-    results_text.insert(tk.END, f"Accuracy: {accuracy_class1:.3f}\n")
-    results_text.insert(tk.END, f"Recall: {recall_class1:.3f}\n")
-    results_text.insert(tk.END, f"Precision: {precision_class1:.3f}\n")
-    results_text.insert(tk.END, f"F1 Score: {f1_class1:.3f}\n\n")
-    results_text.insert(tk.END, "Class 2 Metrics:\n", "bold")
-    results_text.insert(tk.END, f"Accuracy: {accuracy_class2:.3f}\n")
-    results_text.insert(tk.END, f"Recall: {recall_class2:.3f}\n")
-    results_text.insert(tk.END, f"Precision: {precision_class2:.3f}\n")
-    results_text.insert(tk.END, f"F1 Score: {f1_class2:.3f}\n\n")
-    results_text.insert(tk.END, f"Overall Accuracy: {overall_accuracy:.3f}\n", "bold")
+    overall_accuracy = 0
+    for i in range(num_classes):
+        y_true = [pred[i] for pred in predictions]
+        y_pred = [pred[num_classes+ i] for pred in predictions]
+        accuracy = accuracy_score(y_true, y_pred)
+        recall = recall_score(y_true, y_pred, average='macro')
+        precision = precision_score(y_true, y_pred, average='macro')
+        f1 = f1_score(y_true, y_pred, average='macro')
+        overall_accuracy += accuracy
 
+        results_text.insert(tk.END, f"Class {i + 1} Metrics:\n", "bold")
+        results_text.insert(tk.END, f"Accuracy: {accuracy:.3f}\n")
+        results_text.insert(tk.END, f"Recall: {recall:.3f}\n")
+        results_text.insert(tk.END, f"Precision: {precision:.3f}\n")
+        results_text.insert(tk.END, f"F1 Score: {f1:.3f}\n\n")
+
+    overall_accuracy /= num_classes
+    results_text.insert(tk.END, f"Overall Accuracy: {overall_accuracy:.3f}\n", "bold")
     results_text.tag_configure("bold", font=("Helvetica", 12, "bold"))
 
 def clear():
@@ -128,13 +121,14 @@ def clear():
     num_features_entry.delete(0, tk.END)
     percentage_entry.delete(0, tk.END)
     percentage_entry.insert(0, "30")
+    num_classes_entry.delete(0, tk.END)
     progress_label.config(text="")
     results_text.delete(1.0, tk.END)
     TRAIN_PATH = ""
     TEST_PATH = ""
 
 def init_GUI():
-    global root, dataset_label, train_label, test_label, num_features_entry, percentage_entry, progress_label, results_text, results_frame, learning_frame
+    global root, dataset_label, train_label, test_label, num_features_entry, percentage_entry, num_classes_entry, progress_label, results_text, results_frame, learning_frame
     root = tk.Tk()
     root.title("Attack Detection Project")
     root.geometry("400x600")
@@ -168,6 +162,10 @@ def init_GUI():
     tk.Label(root, text="Number of Features:", bg="#f0f0f0").pack(pady=5)
     num_features_entry = tk.Entry(root)
     num_features_entry.pack(pady=5)
+
+    tk.Label(root, text="Number of Classes:", bg="#f0f0f0").pack(pady=5)
+    num_classes_entry = tk.Entry(root)
+    num_classes_entry.pack(pady=5)
 
     button_frame2 = tk.Frame(root, bg="#f0f0f0")
     button_frame2.pack(pady=10)
