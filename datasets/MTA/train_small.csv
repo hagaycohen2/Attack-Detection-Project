@@ -1,0 +1,8 @@
+silence_windows,beacon_12,beacon_15,src2dst_max_piat_ms,wavelet_2,wavelet_11,wavelet_1,wavelet_0,window_delta_2,window_delta_6,window_delta_4,mean_packet_size_delta,main_class,second_class
+7,0,0,402,0.0,0.0,0.0,88859.0,0,0,0,704.72165,dridex,infostealer
+3,0,0,431,52527.42,124299.329,76501.806,29731.133,64240,64240,64240,378.5,emotet,dropper
+2,0,0,158,63312.218,14156.762,108089.687,25425.564,0,0,0,127.0,hancitor,dropper
+0,0,0,0,1960.458,5797.749,4390.653,2273.574,0,0,0,194.18182,icedid,infostealer
+3,-2320,-2184,78842,145989.565,12123.202,44028.884,57510.142,65535,0,65535,319.6,qakbot,infostealer
+0,0,0,0,162036.817,12449.981,49696.879,0.0,65535,0,0,385.71429,valak,infostealer
+0,0,0,0,7427.034,0.0,847720.621,0.0,0,0,0,945.52577,zloader,dropper
