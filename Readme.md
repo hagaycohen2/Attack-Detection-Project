@@ -32,13 +32,8 @@ This project is designed to detect attacks using machine learning models. The pr
 2. Start the Elasticsearch server. Ensure that Elasticsearch is running on `http://localhost:9200` with the appropriate authentication.
     In windows, in the elasticsearch config directory, set `xpack.security.enabled` to false, in the elasticsearch.yaml file.
 
-3. Run the script you want for the desired model, models is for full data, models copy is for one sample
-    For elastic an example is given in the file:
-    ```bash
-    python models\elastic.py -n 12 --test {path to test data without .csv} --train {path to train data without .csv} --metric {OPTIONAL - The distance function, default is l2_norm}
-    ```
-
-
+3. Run the script you want for the desired model, models is for full data, models copy is for one sample data.
+    
 
 ## Project Structure
 - `models`: Contains the train and iference for each model.
@@ -49,7 +44,8 @@ This project is designed to detect attacks using machine learning models. The pr
 
 ### Training
 
-The training process involves creating an Elasticsearch index, inserting the training data into the index, and training the model using the specified number of features and classes. The trained model is saved in Elasticsearch.
+The training process involves creating an Elasticsearch index, inserting the training data into the index, and training the model using the specified number of features and classes. The trained model is saved in Elasticsearch DB.
+For other models the same idea, but the model is saved using joblib.
 
 ### Inference
 
