@@ -64,5 +64,6 @@ In order to run the elastic script, ElasticSearch database must be installed and
 
 - Ensure that Elasticsearch is properly configured and running before starting the project.
 - The project supports multi-class classification, allowing users to specify the number of classes for prediction.
+- IMPORTANT: In order to run the models that are different then elastic, you need to change the path in the code itself, to match your username on your local machine.
 
 
