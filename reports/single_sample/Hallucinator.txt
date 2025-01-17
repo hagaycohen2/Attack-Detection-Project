@@ -1,28 +1,28 @@
 Main Class Classification Report:
               precision    recall  f1-score   support
 
-           0       0.13      0.47      0.20        17
-           1       0.64      0.77      0.70       260
-           2       0.75      0.14      0.23       559
-           3       0.14      0.49      0.22        81
-           4       0.08      0.24      0.12       109
-           5       0.32      0.22      0.26       166
-           6       0.47      0.45      0.46        42
+           0       0.13      0.47      0.21        17
+           1       0.56      0.90      0.69       260
+           2       0.69      0.08      0.15       559
+           3       0.06      0.31      0.10        81
+           4       0.45      0.30      0.36       109
+           5       0.09      0.07      0.08       166
+           6       0.57      0.55      0.56        42
 
-    accuracy                           0.33      1234
-   macro avg       0.36      0.40      0.31      1234
-weighted avg       0.55      0.33      0.33      1234
+    accuracy                           0.31      1234
+   macro avg       0.36      0.38      0.31      1234
+weighted avg       0.50      0.31      0.28      1234
 
 Secondary Class Classification Report:
               precision    recall  f1-score   support
 
-           0       0.90      0.62      0.73       861
-           1       0.49      0.83      0.62       373
+           0       0.98      0.78      0.87       861
+           1       0.65      0.97      0.78       373
 
-    accuracy                           0.69      1234
-   macro avg       0.69      0.73      0.67      1234
-weighted avg       0.77      0.69      0.70      1234
+    accuracy                           0.84      1234
+   macro avg       0.82      0.87      0.82      1234
+weighted avg       0.88      0.84      0.84      1234
 
-Main Class Accuracy: 0.32901134521880065
-Secondary Class Accuracy: 0.6855753646677472
-Overall Accuracy: 0.5072933549432739
+Main Class Accuracy: 0.3079416531604538
+Secondary Class Accuracy: 0.8354943273905997
+Overall Accuracy: 0.5717179902755267

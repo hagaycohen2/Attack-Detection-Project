@@ -2,6 +2,11 @@
 
 This project is designed to detect attacks using machine learning models. The project allows users to choose a dataset, split it into training and testing sets, and train a model using the specified number of features and classes. The trained model is then used to make predictions on the test set.
 
+## Authors
+
+- Hagay Cohen 206846180 - [GitHub Profile](https://github.com/HagayCohen2)
+- Imri Shai 213023500 - [GitHub Profile](https://github.com/ImriShai)
+
 ## Requirements
 
 - Python 3.x
@@ -32,20 +37,26 @@ This project is designed to detect attacks using machine learning models. The pr
 2. Start the Elasticsearch server. Ensure that Elasticsearch is running on `http://localhost:9200` with the appropriate authentication.
     In windows, in the elasticsearch config directory, set `xpack.security.enabled` to false, in the elasticsearch.yaml file.
 
-3. Run the script you want for the desired model, models is for full data, models copy is for one sample data.
-    
+3. Run the script you want for the desierd model - first run train, then infernce to predict, as follows:
+
+ ```bash
+    python {path to python file} --train/--test {path to train/test file, for train or inference of the model} --save {path to save location}
+```
+NOTICE: some of the scripts has different arguments. In each file there is an example at the bottom of how to run, to make it simple.
+
+
+
+
 
 ## Project Structure
 - `models`: Contains the train and iference for each model.
-- `models copy`: Same as above but for the single sample dataset.
-- `datasets/Tournament/feature_extraction.py`: Contains functions for extracting features from the dataset using wavelet transformations.
+- `datasets`: Contains the data for the project.
 
-## Explanation
 
 ### Training
 
 The training process involves creating an Elasticsearch index, inserting the training data into the index, and training the model using the specified number of features and classes. The trained model is saved in Elasticsearch DB.
-For other models the same idea, but the model is saved using joblib.
+For other models the same idea, but the model is saved using joblib to the directory entered by the user.
 
 ### Inference
 
@@ -59,7 +70,6 @@ In order to run the elastic script, ElasticSearch database must be installed and
 ## Notes
 
 - Ensure that Elasticsearch is properly configured and running before starting the project.
-- The project supports multi-class classification, allowing users to specify the number of classes for prediction.
 - IMPORTANT: In order to run the models that are different then elastic, you need to change the path in the code itself, to match your username on your local machine.
 
 

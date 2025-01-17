@@ -1,6 +1,8 @@
+# Authors: Hagay Cohen - 206846180 , Imri Shai - 213023500
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import joblib
+import argparse
 
 
 def train_and_save(train_path, save_path):
@@ -40,12 +42,21 @@ def train_and_save(train_path, save_path):
 
 
 def main():
-    train_path = r'C:\Users\User\Attack-Detection-Project\datasets\MTA\train_mta_data_new_12f.csv'
-    save_path = r'C:\Users\User\Attack-Detection-Project\models\saved_models\RF\\'
+    parser = argparse.ArgumentParser(description="Random Forest Training")
+    parser.add_argument('-t', '--train_path', dest='train_path', help='Path to training data', required=True)
+    parser.add_argument('-s', '--save_path', dest='save_path', help='Path to save model', required=True)
+    args = parser.parse_args()
+    
+    train_path = args.train_path
+    save_path = args.save_path
 
     train_and_save(train_path, save_path)
 
 
 if __name__ == '__main__':
     main()
+    
+# example usage:
+
+# python C:\Users\tnrha\Attack-Detection-Project\models\RF.py -t C:\Users\tnrha\Attack-Detection-Project\datasets\MTA\train_mta_data_new_12f.csv -s C:\Users\tnrha\Attack-Detection-Project\models\saved_models\RF\
 

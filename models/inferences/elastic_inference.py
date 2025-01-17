@@ -1,7 +1,11 @@
+# Authors: Hagay Cohen - 206846180 , Imri Shai - 213023500
+
 import warnings
 from elasticsearch import Elasticsearch
 import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report
+import argparse
+
 
 
 
@@ -31,7 +35,7 @@ def test_search(my_index1,vector,tag,tag2):
 def test(dataset_name, num):
     rows = 0
     prediction = []
-    df = pd.read_csv(dataset_name+".csv",low_memory=False)
+    df = pd.read_csv(dataset_name,low_memory=False)
     for line in df.values.tolist():
         rows += 1
         prediction.append(test_search(ds,line[:num],line[num],line[num+1]))
@@ -41,9 +45,17 @@ def test(dataset_name, num):
 
 
 def main():
+    global ds
     num_features = 12
     
-    test_path = r'C:\Users\tnrha\Attack-Detection-Project\datasets\MTA\test_mta_data_new_12f'
+    parser = argparse.ArgumentParser(description="Elasticsearch KNN")
+    parser.add_argument('-t', '--test_path', dest='test_path', help='Path to test data', required=True)
+    parser.add_argument('-i', '--index', dest='index', help='Index name', default="my-pcap-dataset")
+    
+    args = parser.parse_args()
+    
+    test_path = args.test_path
+    ds = args.index
     
     predictions = test(test_path, num_features)
 
@@ -83,6 +95,11 @@ def main():
     
 if __name__ == "__main__":
     main()
+    
+
+# Eaxmple usage:
+
+# python C:\Users\tnrha\Attack-Detection-Project\models\inferences\elastic_inference.py -t C:\Users\tnrha\Attack-Detection-Project\datasets\MTA\test_mta_data_new_12f.csv -i my-pcap-dataset
 
     
     

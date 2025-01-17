@@ -1,3 +1,5 @@
+# Authors: Hagay Cohen - 206846180 , Imri Shai - 213023500
+
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
@@ -5,6 +7,7 @@ from tensorflow.keras.models import load_model
 import joblib
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, classification_report
+import argparse
 
 # Load and preprocess test dataset
 def load_test_data_as_images(test_path, image_size, save_path):
@@ -88,11 +91,19 @@ def evaluate_umvd_fsl(test_path, image_size, save_path):
         plt.show()
 
 def main():
+    parser = argparse.ArgumentParser(description="Meta-Learning - UMVD-FSL")
+    parser.add_argument('-t', '--test_path', dest='test_path', help='Path to test data', required=True)
+    parser.add_argument('-s', '--save_path', dest='save_path', help='Path to save model', required=True)
+    args = parser.parse_args()
+    
+    test_path = args.test_path
+    save_path = args.save_path
     # Set image dimensions (2x6 images with 1 channel)
     image_size = (2, 6, 1)
-    test_path = r'C:\Users\User\Attack-Detection-Project\datasets\MTA\test_mta_data_new_12f.csv'
-    save_path = r'C:\Users\User\Attack-Detection-Project\models\saved_models\UMVD-FSL\\'
     evaluate_umvd_fsl(test_path, image_size, save_path)
 
 if __name__ == "__main__":
     main()
+    
+# Example usage:
+# python C:\Users\tnrha\Attack-Detection-Project\models\inferences\UMVD_inference.py -t C:\Users\tnrha\Attack-Detection-Project\datasets\MTA\test_mta_data_new_12f -s C:\Users\tnrha\Attack-Detection-Project\models\UMVD_FSL\

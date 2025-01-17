@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from tensorflow.keras import layers, models, optimizers 
 import joblib
+import argparse
 
 # Load and preprocess dataset
 def load_data(train_path, test_path):
@@ -84,6 +85,16 @@ def train_models(X_train, y_train, X_test, y_test, main_classes, secondary_class
     classifier_secondary.save(save_path + 'Hallucinator_secondary.keras')
 
 def main():
+    
+    parser = argparse.ArgumentParser(description="Metric Learning - COD_SNN")
+    parser.add_argument('-t', '--train_path', dest='train_path', help='Path to training data', required=True)
+    parser.add_argument('-s', '--save_path', dest='save_path', help='Path to save model', required=True)
+    args = parser.parse_args()
+    
+    train_path = args.train_path
+    save_path = args.save_path
+    
+    
     X_train, y_train, X_test, y_test, main_classes, secondary_classes = load_data(r'C:\Users\User\Attack-Detection-Project\datasets\MTA\train_small.csv', r'C:\Users\User\Attack-Detection-Project\datasets\MTA\test_mta_data_new_12f.csv')
     train_models(X_train, y_train, X_test, y_test, main_classes, secondary_classes, r"C:\Users\User\Attack-Detection-Project\models copy\saved_models\Hallucinator\\")
 

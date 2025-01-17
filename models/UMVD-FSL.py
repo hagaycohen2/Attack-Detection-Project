@@ -1,9 +1,11 @@
+# Authors: Hagay Cohen - 206846180 , Imri Shai - 213023500
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from tensorflow.keras import layers, models
 import matplotlib.pyplot as plt
 import joblib
+import argparse
 
 # Load and preprocess dataset
 def load_data_as_images(train_path, image_size, save_path):
@@ -112,12 +114,25 @@ def train_umvd_fsl(X_train, y_train_main, y_train_secondary, num_main_classes, n
 def main():
     # Set image dimensions (2x6 images with 1 channel)
     image_size = (2, 6, 1)
+    parser = argparse.ArgumentParser(description="Meta-learning - UMVD-FSL")
+    parser.add_argument('-t', '--train_path', dest='train_path', help='Path to training data', required=True)
+    parser.add_argument('-s', '--save_path', dest='save_path', help='Path to save model', required=True)
+    args = parser.parse_args()
+    
+    train_path = args.train_path
+    save_path = args.save_path
+    
     X_train, y_train_main, y_train_secondary, num_main_classes, num_secondary_classes = load_data_as_images(
-        r'C:\Users\User\Attack-Detection-Project\datasets\MTA\train_mta_data_new_12f.csv',
+        train_path,
         image_size,
-        r'C:\Users\User\Attack-Detection-Project\models\saved_models\UMVD-FSL\\'
+        save_path
     )
-    train_umvd_fsl(X_train, y_train_main, y_train_secondary, num_main_classes, num_secondary_classes, image_size, r'C:\Users\User\Attack-Detection-Project\models\saved_models\UMVD-FSL\\')
+    train_umvd_fsl(X_train, y_train_main, y_train_secondary, num_main_classes, num_secondary_classes, image_size, save_path)
 
 if __name__ == "__main__":
     main()
+    
+
+# Example usage:
+
+# python C:\Users\tnrha\Attack-Detection-Project\models\UMVD-FSL.py -t C:\Users\tnrha\Attack-Detection-Project\datasets\MTA\train_mta_data_new_12f.csv -s C:\Users\tnrha\Attack-Detection-Project\models\saved_models\UMVD-FSL\
